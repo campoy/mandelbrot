@@ -10,7 +10,7 @@ Just run one goroutine per pixel and you get more than 50% speed-up
 
 Some stats:
 
-``
+```
   time mandelbrot -out=out.png -h=4096 -w=4096 -mode=seq
   real	0m25.858s
   user	0m25.260s
@@ -85,4 +85,4 @@ Some stats:
   real	0m16.263s
   user	0m40.196s
   sys	0m3.253s
-``
+```
