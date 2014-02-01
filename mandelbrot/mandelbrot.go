@@ -51,8 +51,5 @@ func fillPixel(m *img, i, j int) {
 
 func paint(c *color.RGBA, x, y float64) {
 	n := byte(x * y)
-	c.R = n
-	c.G = n
-	c.B = n
-	c.A = 255
+	c.R, c.G, c.B, c.A = n, n, n, 255
 }

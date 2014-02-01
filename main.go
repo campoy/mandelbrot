@@ -1,33 +1,49 @@
 package main
 
 import (
+	"errors"
 	"flag"
+	"image/gif"
+	"image/jpeg"
 	"image/png"
 	"log"
 	"os"
-	"runtime"
+	"path/filepath"
 
 	"github.com/campoy/mandelbrot/mandelbrot"
 )
 
 var (
-	output = flag.String("out", "mandelbrot", "name of the output image file")
-	format = flag.String("f", "png", "format of the output image")
-	height = flag.Int("h", 2048, "height of the output image in pixels")
-	width  = flag.Int("w", 2048, "width of the output image in pixels")
+	output = flag.String("out", "mandelbrot.png", "name of the output image file")
+	height = flag.Int("h", 1024, "height of the output image in pixels")
+	width  = flag.Int("w", 1024, "width of the output image in pixels")
 )
 
 func main() {
-	runtime.GOMAXPROCS(runtime.NumCPU())
+	flag.Parse()
 
-	f, err := os.Create(*output + "." + *format)
+	// open a new file
+	f, err := os.Create(*output)
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	// create the image
 	img := mandelbrot.Create(*height, *width)
 
-	err = png.Encode(f, img)
+	// and encoding it
+	fmt := filepath.Ext(*output)
+	switch fmt {
+	case ".png":
+		err = png.Encode(f, img)
+	case ".jpg", ".jpeg":
+		err = jpeg.Encode(f, img, nil)
+	case ".gif":
+		err = gif.Encode(f, img, nil)
+	default:
+		err = errors.New("unkwnown format " + fmt)
+	}
+	// unless you can't
 	if err != nil {
 		log.Fatal(err)
 	}
