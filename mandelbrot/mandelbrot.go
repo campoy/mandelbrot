@@ -33,7 +33,7 @@ func Create(h, w int) image.Image {
 	case "seq":
 		seqFillImg(m)
 	case "px":
-		onePerRowFillImg(m)
+		oneToOneFillImg(m)
 	case "row":
 		onePerRowFillImg(m)
 	case "workers":
