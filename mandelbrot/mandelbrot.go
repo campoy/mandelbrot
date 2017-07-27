@@ -21,13 +21,13 @@ func (m *img) At(x, y int) color.Color { return m.m[x][y] }
 func (m *img) ColorModel() color.Model { return color.RGBAModel }
 func (m *img) Bounds() image.Rectangle { return image.Rect(0, 0, m.h, m.w) }
 
-func Create(h, w int) image.Image {
-	c := make([][]color.RGBA, h)
+func Create(height, w int) image.Image {
+	c := make([][]color.RGBA, height)
 	for i := range c {
 		c[i] = make([]color.RGBA, w)
 	}
 
-	m := &img{h, w, c}
+	m := &img{height, w, c}
 
 	switch *mode {
 	case "seq":
@@ -101,13 +101,16 @@ func onePerRowFillImg(m *img) {
 // user	0m40.615s
 // sys	0m2.517s
 func nWorkersFillImg(m *img) {
-	c := make(chan struct{ i, j int })
+	var wg sync.WaitGroup
+	wg.Add(*workers)
 
+	c := make(chan struct{ i, j int }, m.h*m.w)
 	for i := 0; i < *workers; i++ {
 		go func() {
 			for t := range c {
 				fillPixel(m, t.i, t.j)
 			}
+			wg.Done()
 		}()
 	}
 
@@ -117,6 +120,7 @@ func nWorkersFillImg(m *img) {
 		}
 	}
 	close(c)
+	wg.Wait()
 }
 
 func fillPixel(m *img, i, j int) {

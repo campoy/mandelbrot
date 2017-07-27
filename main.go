@@ -9,7 +9,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"runtime"
 
 	"github.com/campoy/mandelbrot/mandelbrot"
 )
@@ -22,7 +21,6 @@ var (
 
 func main() {
 	flag.Parse()
-	runtime.GOMAXPROCS(runtime.NumCPU())
 
 	// open a new file
 	f, err := os.Create(*output)
