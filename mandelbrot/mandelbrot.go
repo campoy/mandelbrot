@@ -15,15 +15,9 @@
 package mandelbrot
 
 import (
-	"flag"
 	"image"
 	"image/color"
 	"sync"
-)
-
-var (
-	mode    = flag.String("mode", "seq", "mode: seq, px, row, workers")
-	workers = flag.Int("workers", 1, "number of workers to use")
 )
 
 type img struct {
@@ -35,15 +29,15 @@ func (m *img) At(x, y int) color.Color { return m.m[x][y] }
 func (m *img) ColorModel() color.Model { return color.RGBAModel }
 func (m *img) Bounds() image.Rectangle { return image.Rect(0, 0, m.h, m.w) }
 
-func Create(height, w int) image.Image {
-	c := make([][]color.RGBA, height)
-	for i := range c {
-		c[i] = make([]color.RGBA, w)
+func Create(height, width int, mode string, workers int) image.Image {
+	data := make([][]color.RGBA, height)
+	for i := range data {
+		data[i] = make([]color.RGBA, width)
 	}
 
-	m := &img{height, w, c}
+	m := &img{height, width, data}
 
-	switch *mode {
+	switch mode {
 	case "seq":
 		seqFillImg(m)
 	case "px":
@@ -51,7 +45,7 @@ func Create(height, w int) image.Image {
 	case "row":
 		onePerRowFillImg(m)
 	case "workers":
-		nWorkersFillImg(m)
+		nWorkersFillImg(m, workers)
 	default:
 		panic("unknown mode")
 	}
@@ -114,12 +108,12 @@ func onePerRowFillImg(m *img) {
 // real	0m17.304s
 // user	0m40.615s
 // sys	0m2.517s
-func nWorkersFillImg(m *img) {
+func nWorkersFillImg(m *img, workers int) {
 	var wg sync.WaitGroup
-	wg.Add(*workers)
+	wg.Add(workers)
 
 	c := make(chan struct{ i, j int }, m.h*m.w)
-	for i := 0; i < *workers; i++ {
+	for i := 0; i < workers; i++ {
 		go func() {
 			for t := range c {
 				fillPixel(m, t.i, t.j)

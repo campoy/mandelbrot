@@ -28,9 +28,11 @@ import (
 )
 
 var (
-	output = flag.String("out", "mandelbrot.png", "name of the output image file")
-	height = flag.Int("h", 1024, "height of the output image in pixels")
-	width  = flag.Int("w", 1024, "width of the output image in pixels")
+	output  = flag.String("out", "mandelbrot.png", "name of the output image file")
+	height  = flag.Int("h", 2048, "height of the output image in pixels")
+	width   = flag.Int("w", 2048, "width of the output image in pixels")
+	mode    = flag.String("mode", "seq", "mode: seq, px, row, workers")
+	workers = flag.Int("workers", 1, "number of workers to use")
 )
 
 func main() {
@@ -43,7 +45,7 @@ func main() {
 	}
 
 	// create the image
-	img := mandelbrot.Create(*height, *width)
+	img := mandelbrot.Create(*height, *width, *mode, *workers)
 
 	// and encoding it
 	fmt := filepath.Ext(*output)
