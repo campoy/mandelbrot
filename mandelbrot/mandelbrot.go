@@ -29,7 +29,16 @@ func (m *img) At(x, y int) color.Color { return m.m[x][y] }
 func (m *img) ColorModel() color.Model { return color.RGBAModel }
 func (m *img) Bounds() image.Rectangle { return image.Rect(0, 0, m.h, m.w) }
 
-func Create(height, width int, mode string, workers int) image.Image {
+type Mode string
+
+const (
+	Sequential Mode = "seq"
+	Pixel      Mode = "px"
+	Row        Mode = "row"
+	Workers    Mode = "workers"
+)
+
+func Create(height, width int, mode Mode, workers int) image.Image {
 	data := make([][]color.RGBA, height)
 	for i := range data {
 		data[i] = make([]color.RGBA, width)
@@ -38,13 +47,13 @@ func Create(height, width int, mode string, workers int) image.Image {
 	m := &img{height, width, data}
 
 	switch mode {
-	case "seq":
+	case Sequential:
 		seqFillImg(m)
-	case "px":
+	case Pixel:
 		oneToOneFillImg(m)
-	case "row":
+	case Row:
 		onePerRowFillImg(m)
-	case "workers":
+	case Workers:
 		nWorkersFillImg(m, workers)
 	default:
 		panic("unknown mode")

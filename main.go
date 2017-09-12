@@ -45,7 +45,7 @@ func main() {
 	}
 
 	// create the image
-	img := mandelbrot.Create(*height, *width, *mode, *workers)
+	img := mandelbrot.Create(*height, *width, mandelbrot.Mode(*mode), *workers)
 
 	// and encoding it
 	fmt := filepath.Ext(*output)
