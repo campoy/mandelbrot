@@ -121,7 +121,7 @@ func nWorkersFillImg(m *img, workers int) {
 	var wg sync.WaitGroup
 	wg.Add(workers)
 
-	c := make(chan struct{ i, j int }, m.h*m.w)
+	c := make(chan struct{ i, j int })
 	for i := 0; i < workers; i++ {
 		go func() {
 			for t := range c {
