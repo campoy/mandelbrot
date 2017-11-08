@@ -8,6 +8,12 @@ Just run one goroutine per pixel and you get more than 50% speed-up
 
 ![A cool mandelbrot](/mandelbrot.png "Mandelbrot set")
 
+If you have [Docker](https://docs.docker.com/) installed you can compile `mandelbrot` like this:
+
+    $ docker run -ti -v $(pwd):/gopath/bin google/golang \
+      go get github.com/campoy/mandelbrot
+    
+
 Some stats:
 
 ```
